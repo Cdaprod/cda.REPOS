@@ -133,6 +133,17 @@ class GitHubAPI:
         with open('build_structure.json', 'w') as f:
             json.dump(build_structure, f, indent=2)
         print("Generated build_structure.json")
+        
+    def save_repo_data_as_json(self, repo_names, filename):
+        repo_data_list = [
+            self.get_repository(repo_name).dict() 
+            for repo_name in repo_names 
+            if self.get_repository(repo_name)
+        ]
+        with open(filename, 'w') as json_file:
+            json.dump(repo_data_list, json_file, indent=4)
+        print(f"Generated {filename} with repository data.")
+
 
 if __name__ == '__main__':
     github_api = GitHubAPI(access_token=os.environ.get('GH_TOKEN'))
@@ -140,12 +151,8 @@ if __name__ == '__main__':
     if args.dry_run and args.runner:
         print(f"Dry run activated. Fetching data for the runner: {args.runner}")
         repo_names = get_repos_from_runner(args.runner)
-        # Fetch repository data and build JSON structure
-        repo_data_list = [github_api.get_repository(repo_name).dict() for repo_name in repo_names if github_api.get_repository(repo_name)]
-        json_filename = f"{args.runner}_runner.json"
-        with open(json_filename, 'w') as json_file:
-            json.dump(repo_data_list, json_file, indent=4)
-        print(f"Generated {json_filename} with repository data.")
+        github_api.save_repo_data_as_json(repo_names, f"{args.runner}_runner.json")
+
  
     elif args.runner:
         # Load repos from the specified runner's repos.py file
