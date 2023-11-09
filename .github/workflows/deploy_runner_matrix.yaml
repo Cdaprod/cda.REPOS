@@ -1,4 +1,4 @@
-name: Build and Deploy Runners
+name: Build and Deploy Runner Matrix
 
 on:
   workflow_dispatch:
