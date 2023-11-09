@@ -48,7 +48,7 @@ def get_repos_from_runner(runner_type):
 class Owner(BaseModel):
     name: str
     id: int
-    type: str  # User or Organization
+    type: str  
 
 # Define the Repository model
 class Repository(BaseModel):
@@ -86,7 +86,7 @@ class Repository(BaseModel):
     allow_forking: bool
     is_template: bool
     topics: List[str]
-    visibility: str  # 'public' or 'private'
+    visibility: str 
 
 class GitHubAPI:
     BASE_URL = 'https://api.github.com'
@@ -134,20 +134,19 @@ class GitHubAPI:
             json.dump(build_structure, f, indent=2)
         print("Generated build_structure.json")
 
-# Main execution logic
 if __name__ == '__main__':
     github_api = GitHubAPI(access_token=os.environ.get('GH_TOKEN'))
     
-    if args.dry_run:
-        print(f"Dry run activated. Simulating cloning process for the runner: {args.runner}")
+    if args.dry_run and args.runner:
+        print(f"Dry run activated. Fetching data for the runner: {args.runner}")
         repo_names = get_repos_from_runner(args.runner)
-        for repo_name in repo_names:
-            repo_data = github_api.get_repository(repo_name)
-            if repo_data:
-                print(f"Repository {repo_name} found. Would be cloned under normal operations.")
-            else:
-                print(f"Repository {repo_name} not found or access denied.")
-    
+        # Fetch repository data and build JSON structure
+        repo_data_list = [github_api.get_repository(repo_name).dict() for repo_name in repo_names if github_api.get_repository(repo_name)]
+        json_filename = f"{args.runner}_runner.json"
+        with open(json_filename, 'w') as json_file:
+            json.dump(repo_data_list, json_file, indent=4)
+        print(f"Generated {json_filename} with repository data.")
+ 
     elif args.runner:
         # Load repos from the specified runner's repos.py file
         repo_names = get_repos_from_runner(args.runner)
@@ -156,13 +155,13 @@ if __name__ == '__main__':
             if repo_data:
                 github_api.clone_repository(repo_data)
                 # ... additional logic to handle successful cloning ...
-    
+
     elif args.service:
         # Deploy a single service
         repo_data = github_api.get_repository(args.service)
         if repo_data:
             github_api.clone_repository(repo_data)
             # ... additional logic to handle successful cloning ...
-    
+
     else:
         print("Please specify either --runner or --service with an optional --dry-run flag.")
