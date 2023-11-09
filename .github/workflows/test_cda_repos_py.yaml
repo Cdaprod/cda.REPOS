@@ -1,0 +1,28 @@
+name: Test cda_repos.py Arguments with Dry Run
+
+on: [push]
+
+jobs:
+  test-runner-arg:
+    name: Test --runner Argument with Dry Run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Dry run with --runner frontend
+        run: python cda_repos.py --runner frontend --dry-run
+      - name: Dry run with --runner backend
+        run: python cda_repos.py --runner backend --dry-run
+      - name: Dry run with --runner api
+        run: python cda_repos.py --runner api --dry-run
+      - name: Save runner output files
+        run: |
+          mkdir -p frontend backend api
+          mv frontend_runner.json frontend/
+          mv backend_runner.json backend/
+          mv api_runner.json api/

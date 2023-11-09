@@ -1,0 +1,35 @@
+name: Test GitHubAPI Class
+
+on: [push]
+
+jobs:
+  test-github-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Generate frontend repository JSON
+        run: python cda_repos.py --runner frontend --dry-run
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Generate backend repository JSON
+        run: python cda_repos.py --runner backend --dry-run
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Generate API repository JSON
+        run: python cda_repos.py --runner api --dry-run
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Archive JSON outputs
+        uses: actions/upload-artifact@v2
+        with:
+          name: repo-jsons
+          path: |
+            frontend.json
+            backend.json
+            api.json

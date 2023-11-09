@@ -1,0 +1,25 @@
+# Use an appropriate base image
+FROM ubuntu:latest
+
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    sudo \
+    git \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a runner directory
+WORKDIR /actions-runner
+
+# Download the latest runner package
+RUN curl -o actions-runner-linux-x64-2.283.3.tar.gz -L https://github.com/actions/runner/releases/download/v2.283.3/actions-runner-linux-x64-2.283.3.tar.gz
+
+# Extract the installer
+RUN tar xzf ./actions-runner-linux-x64-2.283.3.tar.gz
+
+# Configure the runner (Replace <your-token> and <your-repo-url> with actual values)
+RUN ./config.sh --url <your-repo-url> --token <your-token> --unattended
+
+# Set the entrypoint to the runner
+ENTRYPOINT ["./run.sh"]

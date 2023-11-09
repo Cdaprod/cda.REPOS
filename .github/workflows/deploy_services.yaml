@@ -1,0 +1,38 @@
+name: Deploy Services
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ${{ matrix.runner-label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: 'frontend'
+            runner-label: 'linode'
+          - service: 'backend'
+            runner-label: 'desktop'
+          - service: 'api'
+            runner-label: 'rpi'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests pydantic
+
+    - name: Run cda_repos.py script
+      run: python cda_repos.py
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
