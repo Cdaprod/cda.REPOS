@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 import subprocess
 import json
+import sys
 
 import argparse
 
@@ -15,15 +16,21 @@ parser.add_argument('--runner', type=str, help='Specify the runner to deploy its
 parser.add_argument('--service', type=str, help='Deploy a single service')
 parser.add_argument('--dry-run', action='store_true', help='Run the script in dry-run mode without actual cloning')
 
-
 args = parser.parse_args()
 
 def get_repos_from_runner(runner_type):
-    # Assume that each runner_type has a corresponding repos.py file
-    repos_module = __import__(f'{runner_type}_repos')
-    return [repo for repo_list in vars(repos_module).values() if isinstance(repo_list, list) for repo in repo_list]
-
-
+    # Add the directory to sys.path
+    runner_path = os.path.join(os.getcwd(), runner_type)
+    sys.path.insert(1, runner_path)
+    
+    # Import the repos module from the given path
+    try:
+        repos_module = __import__('repos')
+        return [repo for repo_list in vars(repos_module).values() if isinstance(repo_list, list) for repo in repo_list]
+    except ModuleNotFoundError:
+        print(f"No 'repos.py' module found in the {runner_type} directory.")
+        return []
+ 
 # repo_names = [
 #     'cda.langchain-templates', 'cda.agents',
 #     'cda.Juno', 'cda.actions',
