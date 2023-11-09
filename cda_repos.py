@@ -13,6 +13,8 @@ import argparse
 parser = argparse.ArgumentParser(description='Clone and deploy repositories based on runner or service.')
 parser.add_argument('--runner', type=str, help='Specify the runner to deploy its services', choices=['frontend', 'backend', 'api'])
 parser.add_argument('--service', type=str, help='Deploy a single service')
+parser.add_argument('--dry-run', action='store_true', help='Run the script in dry-run mode without actual cloning')
+
 
 args = parser.parse_args()
 
@@ -128,24 +130,30 @@ class GitHubAPI:
 # Main execution logic
 if __name__ == '__main__':
     github_api = GitHubAPI(access_token=os.environ.get('GH_TOKEN'))
-    cloned_repositories = []
-
-    if args.runner:
-        # Load repos from the specified runner's repos.py file
+    
+    if args.dry_run and args.runner:
         repo_names = get_repos_from_runner(args.runner)
-        cloned_repositories = [github_api.clone_repository(github_api.get_repository(repo_name)) for repo_name in repo_names]
+        # List comprehension is used here only to generate print statements
+        existing_repos = [repo_name for repo_name in repo_names if github_api.get_repository(repo_name)]
+        not_found_repos = [repo_name for repo_name in repo_names if not github_api.get_repository(repo_name)]
+
+        print(f"Dry run activated for runner {args.runner}. The following repositories would be cloned:")
+        [print(f"✓ {repo}") for repo in existing_repos]
+        print("The following repositories could not be found or access was denied:")
+        [print(f"x {repo}") for repo in not_found_repos]
+
+    elif args.runner:
+        repo_names = get_repos_from_runner(args.runner)
+        cloned_repositories = [github_api.clone_repository(github_api.get_repository(repo_name)) for repo_name in repo_names if github_api.get_repository(repo_name)]
+        if cloned_repositories:
+            github_api.generate_build_structure_json(cloned_repositories)
 
     elif args.service:
-        # Deploy a single service
         repo_data = github_api.get_repository(args.service)
         if repo_data:
             github_api.clone_repository(repo_data)
-            cloned_repositories.append(repo_data)
+            # In a real clone scenario, you would append to some list or perform an action here
 
-    if cloned_repositories:
-        github_api.generate_build_structure_json(cloned_repositories)
     else:
-        print("No repositories to clone. Please check the specified runner or service.")
+        print("No action taken. Please specify --runner or --service with an optional --dry-run flag.")
 
-# Example usage: python cda_repos.py --runner frontend
-#                python cda_repos.py --service cda.agents
