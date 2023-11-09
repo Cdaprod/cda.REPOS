@@ -1,0 +1,20 @@
+name: Deploy Self-Hosted Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v2
+      
+      - name: Build Docker Image for Runner
+        run: docker build -f runnable/Dockerfile.runnable -t my-runner .
+
+      - name: Run Docker Container
+        run: |
+          docker run -d --name my-runner-container \
+          -e REGISTRATION_TOKEN=${{ secrets.REGISTRATION_TOKEN }} \
+          my-runner
