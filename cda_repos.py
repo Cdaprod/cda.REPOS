@@ -44,16 +44,6 @@ def get_repos_from_runner(runner_type):
 #     'cda.nginx'
 # ]
 
-class Owner(BaseModel):
-    name: str 
-    id: int
-    type: str
-
-class Project(BaseModel):
-    name: str
-    owner: Owner
-    repositories: List[Repository]
-    
 class Repository(BaseModel):
     id: int
     node_id: str
@@ -91,6 +81,20 @@ class Repository(BaseModel):
     topics: List[str]
     visibility: str 
     submodules: List[Submodule]
+    
+class Project(BaseModel):
+    name: str
+    owner: Owner
+    repositories: List[Repository]
+    
+class Owner(BaseModel):
+    name: str 
+    id: int
+    type: str
+
+
+    
+
     
 class Submodule(BaseModel):
     path: str
