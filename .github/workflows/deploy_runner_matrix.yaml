@@ -11,9 +11,13 @@ jobs:
         runner: [api, frontend, backend]
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Build Docker Image for ${{ matrix.runner }} Runner
-        run: docker build -f runner/Dockerfile.runner -t my-${{ matrix.runner }}-runner .
+        run: |
+          docker build -f runner/Dockerfile.runner \
+          --build-arg REPO_URL=${{ github.event.repository.html_url }} \
+          --build-arg RUNNER_TOKEN=${{ secrets.REGISTRATION_TOKEN }} \
+          -t my-${{ matrix.runner }}-runner .
 
       - name: Run Docker Container for ${{ matrix.runner }} Runner
         run: |
