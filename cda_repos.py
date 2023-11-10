@@ -44,16 +44,15 @@ def get_repos_from_runner(runner_type):
 #     'cda.nginx'
 # ]
 
-class Project(BaseModel):
-    name: str
-    owner: Owner
-    repositories: List[Repository]
-
 class Owner(BaseModel):
     name: str 
     id: int
     type: str
-    projects: List[Project] 
+
+class Project(BaseModel):
+    name: str
+    owner: Owner
+    repositories: List[Repository]
     
 class Repository(BaseModel):
     id: int
