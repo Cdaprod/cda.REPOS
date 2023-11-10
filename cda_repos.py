@@ -95,7 +95,6 @@ class Repository(BaseModel):
     is_template: bool
     topics: List[str]
     visibility: str 
-    submodules: List[Submodule]
     
 
     
