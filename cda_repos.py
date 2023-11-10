@@ -44,10 +44,7 @@ def get_repos_from_runner(runner_type):
 #     'cda.nginx'
 # ]
 
-class Submodule(BaseModel):
-    path: str
-    repository: Repository
-    commit_hash: Optional[str]
+
     
 class Owner(BaseModel):
     name: str 
@@ -96,7 +93,10 @@ class Repository(BaseModel):
     topics: List[str]
     visibility: str 
     
-
+class Submodule(BaseModel):
+    path: str
+    repository: Repository
+    commit_hash: Optional[str]
     
 
 
