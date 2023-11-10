@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner-label: ['linode', 'desktop', 'rpi'] # Replace with your actual runner labels
+        runner-label: ['frontend', 'backend', 'api'] # Replace with your actual runner labels
 
     steps:
       - name: Verify Runner
