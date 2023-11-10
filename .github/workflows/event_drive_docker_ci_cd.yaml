@@ -1,0 +1,65 @@
+name: Event-Driven Docker CI/CD
+
+on:
+  push:
+    branches: [ 'main' ]
+    paths:
+      - 'submodules/cda.webhooks/**'
+
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Integration Tests
+        run: pytest tests/integration
+
+      - name: Run Load Tests
+        run: locust -f tests/load_test.py
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ env.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t my-webhooks-service:latest submodules/cda.webhooks/
+          docker push my-webhooks-service:latest
+
+      - name: Update Deployment
+        run: |
+          echo "$SSH_PRIVATE_KEY" > ssh_key
+          chmod 600 ssh_key
+          ssh -i ssh_key -o "StrictHostKeyChecking=no" user@server "docker pull my-webhooks-service:latest && docker-compose up -d"
+          rm -f ssh_key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Health Check
+        run: curl -f ${{ secrets.HEALTH_CHECK_URL }}
+

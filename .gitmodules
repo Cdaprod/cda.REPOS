@@ -1,0 +1,8 @@
+[submodule "cda.webhooks"]
+	path = cda.webhooks
+	url = https://github.com/cdaprod/cda.webhooks.git
+
+[submodule "cda.data-lake"]
+	path = cda.data-lake
+	url = https://github.com/cdaprod/cda.data-lake.git
+
