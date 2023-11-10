@@ -50,12 +50,7 @@ class Owner(BaseModel):
     name: str 
     id: int
     type: str
-
-class Project(BaseModel):
-    name: str
-    owner: Owner
-    repositories: List[Repository]
- 
+     
 class Repository(BaseModel):
     id: int
     node_id: str
@@ -92,6 +87,11 @@ class Repository(BaseModel):
     is_template: bool
     topics: List[str]
     visibility: str 
+    
+class Project(BaseModel):
+    name: str
+    owner: Owner
+    repositories: Repository
     
 class Submodule(BaseModel):
     path: str
