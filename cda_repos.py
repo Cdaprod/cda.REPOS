@@ -44,13 +44,17 @@ def get_repos_from_runner(runner_type):
 #     'cda.nginx'
 # ]
 
-# Define the Owner model
 class Owner(BaseModel):
-    name: str
+    name: str 
     id: int
-    type: str  
+    type: str
+    projects: List[Project] 
+    
+class Project(BaseModel):
+    name: str
+    owner: Owner
+    repositories: List[Repository]
 
-# Define the Repository model
 class Repository(BaseModel):
     id: int
     node_id: str
@@ -87,6 +91,12 @@ class Repository(BaseModel):
     is_template: bool
     topics: List[str]
     visibility: str 
+    submodules: List[Submodule]
+    
+class Submodule(BaseModel):
+    path: str
+    repository: Repository
+    commit_hash: Optional[str]
 
 class GitHubAPI:
     BASE_URL = 'https://api.github.com'

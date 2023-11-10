@@ -1,0 +1,20 @@
+name: Cdaprod-Solutions Org Runner Status Checks
+
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *' # Schedule to run every 6 hours
+
+jobs:
+  check-runner-status:
+    name: Check ${{ matrix.runner-label }} status
+    runs-on: [self-hosted, ${{ matrix.runner-label }}]
+    strategy:
+      fail-fast: false
+      matrix:
+        runner-label: ['linode', 'desktop', 'rpi'] # Replace with your actual runner labels
+
+    steps:
+      - name: Verify Runner
+        run: |
+          echo "This job is running on a self-hosted runner named ${{ matrix.runner-label }}"
