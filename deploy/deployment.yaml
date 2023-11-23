@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cda-repos-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cda-repos
+  template:
+    metadata:
+      labels:
+        app: cda-repos
+    spec:
+      containers:
+      - name: cda-repos
+        image: yourdockerhubusername/cda-repos:latest
+        ports:
+        - containerPort: 80  # Adjust if your app uses a different port
