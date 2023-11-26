@@ -1,6 +1,9 @@
 package main
 
 import (
+    "canopy.go"
+    "minio_server.go"
+    "weaviate_server.go"
     "context"
     "log"
     "net"
@@ -28,10 +31,14 @@ func newServer() *grpc.Server {
         log.Fatalf("Failed to connect to Canopy service: %v", err)
     }
     canopyClient = canopy.NewCanopyServiceClient(conn)
+    minioClient = minio.NewMinioServiceClient(conn)
+    weaviateClient = weaviate.NewWeaviateServiceClient(conn)
 
     // Add similar connections for other microservices...
 
     // Register services and their implementations
+    minioServer =
+    weaviateServer =
     // ...
 
     return server
