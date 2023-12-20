@@ -5,7 +5,7 @@ from ..canopy import (
           minio_weaviate_canopy_knowledge_base.py,
 )
 
-from ..langchain import (
+from ..langchain-runnables import (
        research-article-generator.py,
        custom-object-generator.py,
        social-media-generator.py, 
@@ -20,6 +20,7 @@ from ..data-lake import (
        cda-github-api.py,
        cda-configurations.py,
        cda-chatgpt-retrieval-plugin.py
+       cda-langchain-system.py
 )
 
 from webhooks import (
