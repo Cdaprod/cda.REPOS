@@ -6,3 +6,6 @@
 	path = cda.data-lake
 	url = https://github.com/cdaprod/cda.data-lake.git
 
+[submodule "apps/apps/custom_bucket_objects_py"]
+	path = apps/apps/custom_bucket_objects_py
+	url = https://github.com/Cdaprod/custom_bucket_objects_py
