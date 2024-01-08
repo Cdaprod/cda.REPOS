@@ -12,7 +12,9 @@ async def redirect_root_to_docs():
     return RedirectResponse("/docs")
 
 add_routes(app, hybrid_search_weaviate_chain, path="/hybrid-search-weaviate")
+
 add_routes(app, chain_ext, path="/rag-weaviate")
+
 add_routes(app, research_assistant_chain, path="/research-assistant")
 
 if __name__ == "__main__":

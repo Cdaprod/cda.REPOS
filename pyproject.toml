@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "cda.REPOS"
+version = "0.1.0"
+description = "CDA Repositories Matrix Repo"
+authors = ["David Cannan Cdaprod@Cdaprod.dev"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+autogen = "^1.0.16"
+langchain = {extras = ["all"], version = "^0.0.352"}
+openai = "^1.6.1"
+langserve = {extras = ["all"], version = "^0.0.37"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
